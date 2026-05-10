@@ -1427,7 +1427,7 @@ def map_timestamps_after_silence_removal(segments, silence_map, log=None):
 def _get_genaipro_api_key():
     """Return GenAI Pro API key from tts_config.json, or None if unavailable."""
     try:
-        config_path = os.path.join(os.path.dirname(__file__), "tts_config.json")
+        config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tts_config.json")
         if os.path.exists(config_path):
             with open(config_path, 'r') as f:
                 config = json.load(f)
@@ -5705,7 +5705,7 @@ def _submit_voice_for_job(job, job_index, total_jobs, q):
         # Try GenAI Pro API key
         api_key = None
         try:
-            config_path = os.path.join(os.path.dirname(__file__), "tts_config.json")
+            config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tts_config.json")
             if os.path.exists(config_path):
                 with open(config_path, 'r') as f:
                     config = json.load(f)
@@ -6552,7 +6552,7 @@ class App:
         saved_openai_key = ""
         saved_openai_model = OPENAI_MODEL
         try:
-            openai_config_path = os.path.join(os.path.dirname(__file__), "openai_config.json")
+            openai_config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "openai_config.json")
             if os.path.exists(openai_config_path):
                 with open(openai_config_path, 'r') as f:
                     openai_cfg = json.load(f)
@@ -6673,7 +6673,7 @@ class App:
         # Load saved API key
         saved_api_key = ""
         try:
-            config_path = os.path.join(os.path.dirname(__file__), "tts_config.json")
+            config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tts_config.json")
             if os.path.exists(config_path):
                 with open(config_path, 'r') as f:
                     config = json.load(f)
@@ -7897,7 +7897,7 @@ class App:
             # Apply the key first
             globals()['OPENAI_API_KEY'] = key
             # Save to config file (preserve existing model setting)
-            config_path = os.path.join(os.path.dirname(__file__), "openai_config.json")
+            config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "openai_config.json")
             config = {}
             try:
                 if os.path.exists(config_path):
@@ -7945,7 +7945,7 @@ class App:
                 model = 'gpt-4o-mini'
             globals()['OPENAI_MODEL'] = model
             # Save to config file (preserve existing key setting)
-            config_path = os.path.join(os.path.dirname(__file__), "openai_config.json")
+            config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "openai_config.json")
             config = {}
             try:
                 if os.path.exists(config_path):
@@ -8099,7 +8099,7 @@ class App:
     def load_custom_voices(self):
         """Load custom voices from config file"""
         try:
-            config_path = os.path.join(os.path.dirname(__file__), "tts_config.json")
+            config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tts_config.json")
             if os.path.exists(config_path):
                 with open(config_path, 'r') as f:
                     config = json.load(f)
@@ -8163,13 +8163,20 @@ class App:
                 messagebox.showwarning("No API Key", "Please enter an API key.")
                 return
             
-            # Save to config file
-            config_path = os.path.join(os.path.dirname(__file__), "tts_config.json")
-            config = {"api_key": api_key}
+            # Save to config file (preserve existing settings like custom_voices)
+            config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tts_config.json")
+            config = {}
+            try:
+                if os.path.exists(config_path):
+                    with open(config_path, 'r') as f:
+                        config = json.load(f)
+            except Exception:
+                pass
+            config["api_key"] = api_key
             
             try:
                 with open(config_path, 'w') as f:
-                    json.dump(config, f)
+                    json.dump(config, f, indent=2)
                 messagebox.showinfo("API Key Saved", "Your API key has been saved successfully!")
             except Exception as e:
                 messagebox.showerror("Save Error", f"Failed to save API key: {e}")
@@ -8192,7 +8199,7 @@ class App:
                 return
             
             # Load existing config
-            config_path = os.path.join(os.path.dirname(__file__), "tts_config.json")
+            config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tts_config.json")
             config = {}
             try:
                 if os.path.exists(config_path):
